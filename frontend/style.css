@@ -1,0 +1,64 @@
+body {
+ margin: 0;
+ font-family: 'Poppins', sans-serif;
+ background: linear-gradient(to right, #6a11cb, #2575fc);
+ color: #333;
+}
+
+.container {
+ min-height: 100vh;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ flex-direction: column;
+}
+
+.login-box {
+ background: white;
+ padding: 30px;
+ border-radius: 20px;
+ text-align: center;
+ box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+ width: 300px;
+}
+
+input {
+ width: 90%;
+ padding: 10px;
+ margin: 10px 0;
+ border-radius: 8px;
+ border: 1px solid #ccc;
+}
+
+button {
+ width: 95%;
+ padding: 10px;
+ margin-top: 10px;
+ border: none;
+ border-radius: 8px;
+ background: #6a11cb;
+ color: white;
+ font-weight: bold;
+ cursor: pointer;
+}
+
+button:hover {
+ background: #2575fc;
+}
+
+#topics-container {
+ display: flex;
+ flex-wrap: wrap;
+ gap: 15px;
+ justify-content: center;
+ margin-top: 20px;
+}
+
+.topic-card {
+ background: white;
+ padding: 15px;
+ border-radius: 15px;
+ width: 200px;
+ text-align: center;
+ box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}

@@ -1,4 +1,0 @@
-- Answer only from the given syllabus
-- Do not generate off-topic content
-- Adapt explanation to learner level
-- If unsure, say you don't know
