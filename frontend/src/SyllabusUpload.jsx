@@ -1,71 +1,69 @@
 import { useState } from "react";
+import "./App.css";
 
-export default function SyllabusUpload() {
- const [file, setFile] = useState(null);
- const [status, setStatus] = useState("");
+export default function SyllabusUpload({ goNext }) {
+    const [file, setFile] = useState(null);
+    const [status, setStatus] = useState("");
+    const [done, setDone] = useState(false);
 
- const uploadSyllabus = async () => {
-  if (!file) {
-   alert("Please upload a syllabus file");
-   return;
-  }
+    const uploadSyllabus = async () => {
+        if (!file) {
+            alert("Please choose a syllabus file");
+            return;
+        }
 
-  const formData = new FormData();
-  formData.append("syllabus", file);
+        const formData = new FormData();
+        formData.append("syllabus", file);
 
-  setStatus("Uploading & analyzing syllabus...");
+        setStatus("Analyzing syllabus...");
+        setDone(false);
 
-  try {
-   const res = await fetch("http://localhost:5000/upload-syllabus", {
-    method: "POST",
-    body: formData,
-   });
+        try {
+            await fetch("http://localhost:5000/upload-syllabus", {
+                method: "POST",
+                body: formData,
+            });
 
-   const data = await res.json();
-   setStatus("Syllabus analyzed successfully ✅");
+            setStatus("Syllabus analyzed successfully ✅");
+            setDone(true);
+        } catch (err) {
+            setStatus("Upload failed ❌");
+        }
+    };
 
-   console.log("AI Summary:", data.summary);
-   alert("Syllabus uploaded & analyzed!");
+    return (
+        <div className="upload-layout">
+            <div className="video-section">
+                <video src="/bg1.mp4" autoPlay loop muted />
+            </div>
 
-  } catch (err) {
-   console.error(err);
-   setStatus("Error uploading syllabus ❌");
-  }
- };
+            <div className="upload-section">
+                <div className="upload-card">
+                    <h1>Upload Your Syllabus</h1>
+                    <p>Let AI personalize your learning journey</p>
 
- return (
-  <div style={styles.page}>
-   <div style={styles.card}>
-    <h1>Upload Your Syllabus</h1>
-    <p>AI will analyze the topic structure</p>
+                    <label className="file-box">
+                        <input
+                            type="file"
+                            hidden
+                            onChange={(e) => setFile(e.target.files[0])}
+                        />
+                        {file ? file.name : "Click to choose syllabus file"}
+                    </label>
 
-    <input
-     type="file"
-     onChange={(e) => setFile(e.target.files[0])}
-    />
+                    <button onClick={uploadSyllabus}>
+                        Upload & Analyze
+                    </button>
 
-    <button onClick={uploadSyllabus}>Upload</button>
+                    {status && <span className="status">{status}</span>}
 
-    <p>{status}</p>
-   </div>
-  </div>
- );
+                    {done && (
+                        <button className="continue-btn" onClick={goNext}>
+                            Continue →
+                        </button>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
 }
-
-const styles = {
- page: {
-  minHeight: "100vh",
-  background: "#111",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  color: "white",
- },
- card: {
-  background: "#1c1c1c",
-  padding: "30px",
-  borderRadius: "12px",
-  width: "350px",
-  textAlign: "center",
- },
-};
