@@ -1,8 +1,6 @@
 {
- "subject": "Physics",
+ "subject": "Mathematics",
  "class": "10",
- "topics": [
-  "Motion",
-  "Light"
- ]
+ "board": "CBSE",
+ "topic": "Linear Equations in Two Variables"
 }
