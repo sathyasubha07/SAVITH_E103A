@@ -36,20 +36,27 @@ async function generateMock() {
     ]
     `;
 
-
-
         const rawResponse = await callGroq(prompt);
-        console.log("Groq Raw Response:", rawResponse); // Debugging
+        console.log("Groq Raw Response:", rawResponse);
 
-        // Robust JSON extraction: Find elements between first '[' and last ']'
-        const jsonMatch = rawResponse.match(/\[[\s\S]*\]/);
+        // Indestructible JSON extraction
+        let cleanResponse = rawResponse.trim();
 
-        if (!jsonMatch) {
-            throw new Error("No JSON array found in AI response");
+        // Handle markdown blocks
+        if (cleanResponse.includes("```json")) {
+            cleanResponse = cleanResponse.split("```json")[1].split("```")[0].trim();
+        } else if (cleanResponse.includes("```")) {
+            cleanResponse = cleanResponse.split("```")[1].split("```")[0].trim();
         }
 
-        const cleanResponse = jsonMatch[0];
-        return JSON.parse(cleanResponse);
+        // Match the bracketed array
+        const jsonMatch = cleanResponse.match(/\[[\s\S]*\]/);
+
+        if (!jsonMatch) {
+            throw new Error("AI failed to return a valid question list. Please try again.");
+        }
+
+        return JSON.parse(jsonMatch[0]);
 
     } catch (error) {
         console.error("Error generating mock test:", error);

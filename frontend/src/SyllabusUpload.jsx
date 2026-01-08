@@ -34,7 +34,7 @@ export default function SyllabusUpload({ goNext }) {
     return (
         <div className="upload-layout">
             <div className="video-section">
-                <video src="/bg1.mp4" autoPlay loop muted />
+                <video src="/bg1.mp4" autoPlay loop muted playsInline />
             </div>
 
             <div className="upload-section">

@@ -6,7 +6,6 @@ import "./App.css";
 import SyllabusUpload from "./SyllabusUpload";
 import LearningPage from "./LearningPage";
 import FinalTest from "./FinalTest";
-import Dashboard from "./Dashboard";
 
 /* ================= MAIN APP ================= */
 
@@ -14,56 +13,79 @@ export default function App() {
   const [page, setPage] = useState("auth");
   const [level, setLevel] = useState("");
 
-  if (page === "upload") {
-    return <SyllabusUpload goNext={() => setPage("level")} />;
-  }
-
-  if (page === "level") {
-    return (
+  const renderPage = () => {
+    if (page === "upload") return <SyllabusUpload goNext={() => setPage("level")} />;
+    if (page === "level") return (
       <LevelSelection
-        onSelect={(lvl) => {
-          setLevel(lvl);
-          alert(`Level selected: ${lvl}`);
-        }}
+        onSelect={(lvl) => { setLevel(lvl); setPage("learning"); }}
         onMock={() => setPage("mock")}
       />
     );
-  }
-
-  if (page === "learning") {
-    return (
-      <LearningPage
-        level={level}
-        onComplete={() => setPage("finalTest")}
-      />
+    if (page === "learning") return <LearningPage level={level} onComplete={() => setPage("finalTest")} />;
+    if (page === "finalTest") return <FinalTest onFinish={() => setPage("complete")} />;
+    if (page === "complete") return (
+      <div className="complete-screen">
+        <h1>🎊 Mission Complete! 🎊</h1>
+        <p>You have finished your personalized learning journey.</p>
+        <button className="login-btn" style={{ width: "200px" }} onClick={() => setPage("upload")}>
+          Start New Syllabus
+        </button>
+      </div>
     );
-  }
-
-  if (page === "finalTest") {
-    return (
-      <FinalTest
-        onFinish={() => setPage("dashboard")}
-      />
-    )
-  }
-
-  if (page === "dashboard") {
-    return <Dashboard />;
-  }
-
-  if (page === "mock") {
-    return (
+    if (page === "mock") return (
       <MockTest
-        onFinish={(lvl) => {
-          setLevel(lvl);
-          alert(`Mock test assigned you to: ${lvl}. Starting personalized learning...`);
-          setPage("learning");
-        }}
+        onFinish={(lvl) => { setLevel(lvl); setPage("learning"); }}
       />
     );
-  }
+    return null;
+  };
 
-  return <AuthPage goNext={() => setPage("upload")} />;
+  if (page === "auth") return <AuthPage goNext={() => setPage("upload")} />;
+
+  return (
+    <div className="main-layout">
+      <Sidebar activePage={page} setPage={setPage} />
+      <main className="content-area">
+        {renderPage()}
+      </main>
+    </div>
+  );
+}
+
+/* ================= SIDEBAR ================= */
+
+function Sidebar({ activePage, setPage }) {
+  const menuItems = [
+    { id: "upload", label: "Upload Syllabus", icon: "📁" },
+    { id: "level", label: "Choose Level", icon: "🎯" },
+    { id: "mock", label: "Mock Test", icon: "📝" },
+    { id: "learning", label: "Learning Notes", icon: "📖" },
+    { id: "finalTest", label: "Final Assessment", icon: "🏆" },
+  ];
+
+  return (
+    <div className="sidebar">
+      <div className="sidebar-logo">
+        <h2 style={{ color: "#8b5cf6" }}>AV</h2>
+        <span>Academic Weapon</span>
+      </div>
+      <nav className="sidebar-nav">
+        {menuItems.map((item) => (
+          <div
+            key={item.id}
+            className={`nav-item ${activePage === item.id ? "active" : ""}`}
+            onClick={() => setPage(item.id)}
+          >
+            <span className="nav-icon">{item.icon}</span>
+            <span className="nav-label">{item.label}</span>
+          </div>
+        ))}
+      </nav>
+      <div className="sidebar-footer">
+        <button className="logout-btn" onClick={() => window.location.reload()}>Logout</button>
+      </div>
+    </div>
+  );
 }
 
 /* ================= AUTH PAGE ================= */
@@ -200,7 +222,7 @@ function MockTest({ onFinish }) {
       setLoading(false);
     } catch (err) {
       console.error(err);
-      alert(err.message || "Failed to load questions. Make sure you uploaded a syllabus first!");
+      alert(`Test Error: ${err.message || "Please check if you uploaded a syllabus and try again."}`);
       setLoading(false);
     }
   };

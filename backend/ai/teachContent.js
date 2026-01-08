@@ -24,8 +24,7 @@ async function teachContent(level) {
     - If Intermediate: Focus on application and solving standard problems.
     - If Advanced: Focus on complex scenarios, edge cases, and optimization.
     
-    **Output Format:**
-    Return a STRICT JSON object (no markdown):
+    **Output Format (STRICT JSON ONLY):**
     {
       "title": "Lesson Title",
       "level": "${level}",
@@ -34,12 +33,7 @@ async function teachContent(level) {
         {
           "heading": "Topic 1",
           "content": "Detailed explanation tailored to ${level} level.",
-          "youtubeQuery": "Search term to find a relevant youtube video for this topic" 
-        },
-        {
-          "heading": "Topic 2",
-          "content": "Detailed explanation...",
-          "youtubeQuery": "Search term..."
+          "youtubeQuery": "Search term to find a relevant youtube video" 
         }
       ],
       "summary": "Wrap up"
@@ -49,8 +43,14 @@ async function teachContent(level) {
     const rawResponse = await callGroq(prompt);
     console.log("Groq Lesson Response:", rawResponse);
 
-    // Match either {...} or [...]
-    const jsonMatch = rawResponse.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+    let cleanResponse = rawResponse.trim();
+    if (cleanResponse.includes("```json")) {
+      cleanResponse = cleanResponse.split("```json")[1].split("```")[0].trim();
+    } else if (cleanResponse.includes("```")) {
+      cleanResponse = cleanResponse.split("```")[1].split("```")[0].trim();
+    }
+
+    const jsonMatch = cleanResponse.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
 
     if (!jsonMatch) {
       throw new Error("No JSON found in lesson response");
@@ -58,7 +58,6 @@ async function teachContent(level) {
 
     let parsed = JSON.parse(jsonMatch[0]);
 
-    // If array, take the first item
     if (Array.isArray(parsed)) {
       parsed = parsed[0];
     }
@@ -67,13 +66,12 @@ async function teachContent(level) {
 
   } catch (error) {
     console.error("Error generating lesson:", error);
-    // Fallback content to prevent app crash
     return {
       title: "Lesson Generation Failed",
       level: level,
-      introduction: "We encountered an issue generating your lesson. Please try again.",
+      introduction: "We encountered an issue. " + error.message,
       sections: [],
-      summary: "Error: " + error.message
+      summary: "Please try again shortly."
     };
   }
 }

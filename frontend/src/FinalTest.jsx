@@ -19,11 +19,13 @@ export default function FinalTest({ onFinish }) {
         try {
             const res = await fetch("http://localhost:5000/generate-mock");
             const data = await res.json();
-            setQuestions(data);
+            if (data.error) throw new Error(data.error);
+            setQuestions(Array.isArray(data) ? data : []);
             setLoading(false);
         } catch (err) {
             console.error(err);
-            alert("Failed to load test.");
+            alert(`Final Test Error: ${err.message || "Please try again."}`);
+            setLoading(false);
         }
     };
 
