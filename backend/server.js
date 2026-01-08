@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
 const fs = require("fs");
+const pdf = require("pdf-parse");
 
 const app = express();
 const PORT = 5000;
@@ -20,6 +21,8 @@ app.get("/", (req, res) => {
 const upload = multer({ dest: "uploads/" });
 
 const teachContent = require("./ai/teachContent");
+const askDoubt = require("./ai/askDoubt");
+const generateMock = require("./ai/generateMock");
 
 // lesson generation route
 app.post("/teach", async (req, res) => {
@@ -34,8 +37,6 @@ app.post("/teach", async (req, res) => {
 });
 
 // syllabus upload route
-const pdf = require("pdf-parse");
-
 app.post("/upload-syllabus", upload.single("syllabus"), async (req, res) => {
     try {
         if (!req.file) {
@@ -43,32 +44,48 @@ app.post("/upload-syllabus", upload.single("syllabus"), async (req, res) => {
         }
 
         const filePath = req.file.path;
+        const extension = req.file.originalname.split(".").pop().toLowerCase();
         let content = "";
 
-        // Check if file is PDF
-        if (req.file.mimetype === "application/pdf") {
+        console.log(`Processing file: ${req.file.originalname}, Mime: ${req.file.mimetype}, Ext: ${extension}`);
+
+        if (req.file.mimetype === "application/pdf" || extension === "pdf") {
             const dataBuffer = fs.readFileSync(filePath);
             const data = await pdf(dataBuffer);
             content = data.text;
+            console.log("PDF Extraction Success. chars:", content.length);
         } else {
-            // Default to text
             content = fs.readFileSync(filePath, "utf-8");
+            console.log("Text Extraction Success. chars:", content.length);
         }
 
-        // store syllabus (mini-RAG base)
+        if (!content || content.trim().length < 10) {
+            throw new Error("Syllabus content is too short or empty.");
+        }
+
         fs.writeFileSync("syllabus.txt", content);
 
         res.json({
             message: "Syllabus received successfully",
-            summary: content.slice(0, 500) // preview only
+            summary: content.slice(0, 500)
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Failed to process syllabus" });
+        res.status(500).json({ error: "Failed to process syllabus: " + err.message });
     }
 });
 
-const generateMock = require("./ai/generateMock");
+// doubt clearing route
+app.post("/ask-doubt", async (req, res) => {
+    const { question } = req.body;
+    try {
+        const answer = await askDoubt(question);
+        res.json({ answer });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    }
+});
 
 // mock test generation route
 app.get("/generate-mock", async (req, res) => {
@@ -80,8 +97,6 @@ app.get("/generate-mock", async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-
-
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

@@ -6,6 +6,7 @@ import "./App.css";
 import SyllabusUpload from "./SyllabusUpload";
 import LearningPage from "./LearningPage";
 import FinalTest from "./FinalTest";
+import DoubtsPage from "./DoubtsPage";
 
 /* ================= MAIN APP ================= */
 
@@ -23,6 +24,7 @@ export default function App() {
     );
     if (page === "learning") return <LearningPage level={level} onComplete={() => setPage("finalTest")} />;
     if (page === "finalTest") return <FinalTest onFinish={() => setPage("complete")} />;
+    if (page === "doubts") return <DoubtsPage />;
     if (page === "complete") return (
       <div className="complete-screen">
         <h1>🎊 Mission Complete! 🎊</h1>
@@ -61,6 +63,7 @@ function Sidebar({ activePage, setPage }) {
     { id: "mock", label: "Mock Test", icon: "📝" },
     { id: "learning", label: "Learning Notes", icon: "📖" },
     { id: "finalTest", label: "Final Assessment", icon: "🏆" },
+    { id: "doubts", label: "Clear Doubts", icon: "💬" },
   ];
 
   return (
