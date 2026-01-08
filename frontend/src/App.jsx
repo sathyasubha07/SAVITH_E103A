@@ -7,46 +7,114 @@ import SyllabusUpload from "./SyllabusUpload";
 import LearningPage from "./LearningPage";
 import FinalTest from "./FinalTest";
 import DoubtsPage from "./DoubtsPage";
+import HomePage from "./HomePage";
+import HistoryPage from "./HistoryPage";
 
 /* ================= MAIN APP ================= */
 
 export default function App() {
   const [page, setPage] = useState("auth");
   const [level, setLevel] = useState("");
+  const [points, setPoints] = useState(Number(localStorage.getItem("points") || 0));
+
+  useEffect(() => {
+    if (page === "home") {
+      checkStreak();
+    }
+  }, [page]);
+
+  const checkStreak = () => {
+    const today = new Date().toLocaleDateString();
+    const lastAwarded = localStorage.getItem("lastStreakAwarded");
+    const lastLogin = localStorage.getItem("lastLogin");
+    const streak = Number(localStorage.getItem("streak") || 0);
+
+    // If already rewarded today, stop
+    if (lastAwarded === today) return;
+
+    let newStreak = 1;
+    const bonus = 10;
+
+    if (lastLogin) {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toLocaleDateString();
+
+      if (lastLogin === yesterdayStr) {
+        newStreak = streak + 1;
+      }
+    }
+
+    const currentPoints = Number(localStorage.getItem("points") || 0);
+    const updatedPoints = currentPoints + bonus;
+
+    // Update storage
+    localStorage.setItem("lastLogin", today);
+    localStorage.setItem("lastStreakAwarded", today);
+    localStorage.setItem("streak", newStreak.toString());
+    localStorage.setItem("points", updatedPoints.toString());
+
+    // Update state for immediate UI response
+    setPoints(updatedPoints);
+
+    // Grammatically correct pop-up
+    alert(`Yay! You're on a ${newStreak}-day streak! You've received ${bonus} bonus points. Keep coming back daily to earn more!`);
+  };
 
   const renderPage = () => {
-    if (page === "upload") return <SyllabusUpload goNext={() => setPage("level")} />;
+    if (page === "home") return <HomePage setPage={setPage} />;
+    if (page === "upload") return <SyllabusUpload goNext={() => setPage("home")} />;
     if (page === "level") return (
       <LevelSelection
-        onSelect={(lvl) => { setLevel(lvl); setPage("learning"); }}
+        onSelect={(lvl) => {
+          setLevel(lvl);
+          localStorage.removeItem("saved_lesson");
+          setPage("learning");
+        }}
         onMock={() => setPage("mock")}
       />
     );
     if (page === "learning") return <LearningPage level={level} onComplete={() => setPage("finalTest")} />;
-    if (page === "finalTest") return <FinalTest onFinish={() => setPage("complete")} />;
+    if (page === "yourNotes") return <LearningPage mode="archive" onComplete={() => setPage("doubts")} />;
+    if (page === "finalTest") return <FinalTest onFinish={() => {
+      // Refresh points state when test finishes
+      setPoints(Number(localStorage.getItem("points") || 0));
+      setPage("complete");
+    }} />;
     if (page === "doubts") return <DoubtsPage />;
+    if (page === "history") return <HistoryPage />;
     if (page === "complete") return (
       <div className="complete-screen">
         <h1>🎊 Mission Complete! 🎊</h1>
         <p>You have finished your personalized learning journey.</p>
-        <button className="login-btn" style={{ width: "200px" }} onClick={() => setPage("upload")}>
+        <button className="login-btn" style={{ width: "200px" }} onClick={() => {
+          localStorage.removeItem("saved_lesson");
+          setPage("upload");
+        }}>
           Start New Syllabus
         </button>
       </div>
     );
     if (page === "mock") return (
       <MockTest
-        onFinish={(lvl) => { setLevel(lvl); setPage("learning"); }}
+        onFinish={(lvl) => {
+          setLevel(lvl);
+          localStorage.removeItem("saved_lesson");
+          setPage("learning");
+        }}
       />
     );
     return null;
   };
 
-  if (page === "auth") return <AuthPage goNext={() => setPage("upload")} />;
+  if (page === "auth") return <AuthPage goNext={() => {
+    setPoints(Number(localStorage.getItem("points") || 0));
+    setPage("home");
+  }} />;
 
   return (
     <div className="main-layout">
-      <Sidebar activePage={page} setPage={setPage} />
+      <Sidebar activePage={page} setPage={setPage} points={points} />
       <main className="content-area">
         {renderPage()}
       </main>
@@ -56,15 +124,27 @@ export default function App() {
 
 /* ================= SIDEBAR ================= */
 
-function Sidebar({ activePage, setPage }) {
+function Sidebar({ activePage, setPage, points }) {
   const menuItems = [
+    { id: "home", label: "Dashboard", icon: "🏠" },
     { id: "upload", label: "Upload Syllabus", icon: "📁" },
     { id: "level", label: "Choose Level", icon: "🎯" },
-    { id: "mock", label: "Mock Test", icon: "📝" },
-    { id: "learning", label: "Learning Notes", icon: "📖" },
-    { id: "finalTest", label: "Final Assessment", icon: "🏆" },
+    { id: "yourNotes", label: "Your Notes", icon: "📖" },
+    { id: "history", label: "Test History", icon: "📊" },
     { id: "doubts", label: "Clear Doubts", icon: "💬" },
   ];
+
+  const handleReset = async () => {
+    if (!window.confirm("ARE YOU SURE? This will wipe ALL your progress, points, and notes!")) return;
+
+    try {
+      await fetch("http://localhost:5000/reset-system", { method: "POST" });
+      localStorage.clear(); // Clear everything
+      window.location.reload(); // Hard reset
+    } catch (err) {
+      alert("Reset failed: " + err.message);
+    }
+  };
 
   return (
     <div className="sidebar">
@@ -72,6 +152,12 @@ function Sidebar({ activePage, setPage }) {
         <h2 style={{ color: "#8b5cf6" }}>AV</h2>
         <span>Academic Weapon</span>
       </div>
+
+      <div className="points-display">
+        <span className="points-label">Total Points</span>
+        <span className="points-value">⭐ {points}</span>
+      </div>
+
       <nav className="sidebar-nav">
         {menuItems.map((item) => (
           <div
@@ -85,6 +171,7 @@ function Sidebar({ activePage, setPage }) {
         ))}
       </nav>
       <div className="sidebar-footer">
+        <button className="reset-btn" onClick={handleReset}>Fresh Start 🧹</button>
         <button className="logout-btn" onClick={() => window.location.reload()}>Logout</button>
       </div>
     </div>
@@ -104,6 +191,9 @@ function AuthPage({ goNext }) {
       return;
     }
     localStorage.setItem("user", JSON.stringify({ username, password }));
+    localStorage.setItem("points", "0");
+    localStorage.setItem("history", "[]");
+    localStorage.setItem("notes_archive", "[]");
     alert("Signup successful! Please login.");
     setMode("login");
     setUsername("");
@@ -117,6 +207,7 @@ function AuthPage({ goNext }) {
       return;
     }
     goNext();
+    setPage("home");
   };
 
   return (

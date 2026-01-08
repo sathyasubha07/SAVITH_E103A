@@ -98,6 +98,20 @@ app.get("/generate-mock", async (req, res) => {
     }
 });
 
+// Reset system route
+app.post("/reset-system", (req, res) => {
+    try {
+        if (fs.existsSync("syllabus.txt")) {
+            fs.unlinkSync("syllabus.txt");
+        }
+        // Also clear any cached data if necessary
+        res.json({ message: "System reset successfully" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to reset system: " + err.message });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
