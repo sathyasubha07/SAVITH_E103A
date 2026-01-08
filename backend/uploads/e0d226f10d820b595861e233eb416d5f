@@ -1,0 +1,85 @@
+# PHYSICS NOTES: MOTION (KINEMATICS) - CLASS 10 CBSE
+
+## 1. BASIC CONCEPTS
+
+* **Rest:** An object is at rest if it does not change its position with respect to its surroundings.
+* **Motion:** An object is in motion if it changes its position over time.
+* **Distance (Scalar):** The actual path length travelled. (Unit: meters)
+* **Displacement (Vector):** The shortest distance between the starting and ending point. (Unit: meters)
+
+> **Key Rule:** Distance is always >= Displacement.
+
+---
+
+## 2. SPEED AND VELOCITY
+
+* **Speed:** Distance travelled per unit time.
+Formula: Speed = Distance / Time
+* **Velocity:** Displacement per unit time.
+Formula: Velocity = Displacement / Time
+* **Average Speed:** Total Distance / Total Time
+* **Uniform Motion:** When an object covers equal distances in equal intervals of time.
+
+---
+
+## 3. ACCELERATION
+
+Acceleration (a) is the rate of change of velocity.
+
+**Formula:** a = (v - u) / t
+
+Where:
+
+* u = initial velocity
+* v = final velocity
+* t = time taken
+* Unit: m/s^2 (meters per second squared)
+* **Positive Acceleration:** Velocity is increasing.
+* **Retardation (Negative Acceleration):** Velocity is decreasing.
+
+---
+
+## 4. EQUATIONS OF MOTION (Very Important)
+
+Use these when an object moves with "Uniform Acceleration":
+
+1. **First Equation:** v = u + at
+(Relates velocity and time)
+2. **Second Equation:** s = ut + 0.5 * a * t^2
+(Relates position and time)
+3. **Third Equation:** v^2 = u^2 + 2as
+(Relates velocity and position)
+
+---
+
+## 5. GRAPHICAL ANALYSIS
+
+Graphs are a common way to solve kinematics problems in CBSE exams:
+
+* **Distance-Time Graph:** - Slope of the line = Speed.
+* A straight diagonal line means Constant Speed.
+
+
+
+* **Velocity-Time Graph:**
+* Slope of the line = Acceleration.
+* Area under the line = Total Displacement.
+
+
+
+---
+
+## 6. UNIFORM CIRCULAR MOTION
+
+When an object moves in a circle at a constant speed:
+
+* The speed is constant, but **velocity is changing** (because the direction changes).
+* It is called an "Accelerated Motion."
+
+**Formula for Velocity:**
+v = (2 * pi * r) / t
+
+(where r = radius of the circle)
+
+---
+

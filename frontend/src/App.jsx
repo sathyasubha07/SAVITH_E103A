@@ -62,8 +62,8 @@ export default function App() {
   };
 
   const renderPage = () => {
-    if (page === "home") return <HomePage setPage={setPage} />;
-    if (page === "upload") return <SyllabusUpload goNext={() => setPage("home")} />;
+    if (page === "home") return <HomePage setPage={setPage} setPoints={setPoints} />;
+    if (page === "upload") return <SyllabusUpload goNext={() => setPage("level")} />;
     if (page === "level") return (
       <LevelSelection
         onSelect={(lvl) => {
@@ -114,7 +114,7 @@ export default function App() {
 
   return (
     <div className="main-layout">
-      <Sidebar activePage={page} setPage={setPage} points={points} />
+      <Sidebar activePage={page} setPage={setPage} />
       <main className="content-area">
         {renderPage()}
       </main>
@@ -124,7 +124,7 @@ export default function App() {
 
 /* ================= SIDEBAR ================= */
 
-function Sidebar({ activePage, setPage, points }) {
+function Sidebar({ activePage, setPage }) {
   const menuItems = [
     { id: "home", label: "Dashboard", icon: "🏠" },
     { id: "upload", label: "Upload Syllabus", icon: "📁" },
@@ -151,11 +151,6 @@ function Sidebar({ activePage, setPage, points }) {
       <div className="sidebar-logo">
         <h2 style={{ color: "#8b5cf6" }}>AV</h2>
         <span>Academic Weapon</span>
-      </div>
-
-      <div className="points-display">
-        <span className="points-label">Total Points</span>
-        <span className="points-value">⭐ {points}</span>
       </div>
 
       <nav className="sidebar-nav">

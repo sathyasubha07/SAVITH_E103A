@@ -1,0 +1,72 @@
+## 1. Basic Concepts
+
+* **Rest and Motion:** Rest and motion are relative terms. An object may be at rest with respect to one observer but in motion with respect to another.
+* **Scalar Quantities:** Quantities that have only magnitude (e.g., Distance, Speed).
+* **Vector Quantities:** Quantities that have both magnitude and direction (e.g., Displacement, Velocity).
+
+### Distance vs. Displacement
+
+| Feature | Distance | Displacement |
+| --- | --- | --- |
+| **Definition** | Total path length covered by an object. | The shortest straight-line path between initial and final points. |
+| **Type** | Scalar quantity. | Vector quantity. |
+| **Value** | Always positive; cannot be zero if motion occurs. | Can be positive, negative, or zero. |
+
+---
+
+## 2. Speed and Velocity
+
+* **Speed:** The rate of change of distance.
+
+* **Velocity:** The rate of change of displacement (speed in a specific direction).
+
+* **Average Speed:** Total distance divided by total time.
+* **Uniform Motion:** When an object covers equal distances in equal intervals of time.
+
+---
+
+## 3. Acceleration
+
+Acceleration is the rate of change of velocity with respect to time. It occurs if the speed changes, the direction changes, or both change.
+
+* ****: Initial velocity
+* ****: Final velocity
+* ****: Time taken
+* **S.I. Unit**: 
+* **Retardation:** Negative acceleration (when an object slows down).
+
+---
+
+## 4. Graphical Representation of Motion
+
+Graphs are essential for visualizing how an object moves over time.
+
+* **Distance-Time Graph:**
+* The **slope** of a distance-time graph represents **Speed**.
+* A straight line indicates uniform speed.
+
+
+* **Velocity-Time Graph:**
+* The **slope** of a velocity-time graph represents **Acceleration**.
+* The **area under the curve** represents **Displacement**.
+
+
+
+---
+
+## 5. Equations of Motion (For Uniform Acceleration)
+
+These three equations describe the relationship between , , , , and  (distance/displacement).
+
+1. **First Equation (Velocity-Time):** 
+2. **Second Equation (Position-Time):** 
+3. **Third Equation (Position-Velocity):** 
+
+---
+
+## 6. Uniform Circular Motion
+
+When an object moves in a circular path with constant speed, it is called Uniform Circular Motion.
+
+* **Note:** Even if the speed is constant, the **velocity is changing** because the direction of motion changes at every point. Therefore, circular motion is always an **accelerated motion**.
+* **Velocity Formula:**  (where  is the radius).
